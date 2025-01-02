@@ -1,0 +1,75 @@
+<!-- Compiled and minified CSS -->
+<link rel="stylesheet" href="./materialize.min.css">
+<!-- Compiled and minified JavaScript -->
+<script src="./materialize.min.js"></script>
+
+<script src="./jquery-3.7.1.min.js"></script>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+<script>
+    let xhr = new XMLHttpRequest();
+    xhr.open("GET", "./meiyu.json");
+    xhr.send();
+
+    let meiyu;
+    xhr.onload = function () {
+        meiyu = JSON.parse(xhr.responseText);
+    }
+
+    const states = {
+        "NEW": 0,
+        "REVEALED": 1,
+    }
+
+    let state, meiyuinfo, nowItem;
+
+    function next (ua) {
+        if (!ua) {
+            nowItem = meiyu[Math.floor(Math.random() * meiyu.length)];
+            meiyuinfo.innerText = nowItem["question"];
+            const options = $(".option");
+            options[0].innerText = nowItem["options"][0].toString();
+            options[1].innerText = nowItem["options"][1].toString();
+            options[2].innerText = nowItem["options"][2].toString();
+            options[3].innerText = nowItem["options"][3].toString();
+        } else {
+            if (ua === nowItem["answer"]) {
+                M.toast({html: "Correct!"});
+                next();
+            } else {
+                M.toast({html: "Incorrect! Answer: " + nowItem["options"][{
+                        "A": 0,
+                        "B": 1,
+                        "C": 2,
+                        "D": 3
+                    }[nowItem['answer']]]});
+            }
+        }
+    }
+
+    function init () {
+        state = states.NEW;
+        meiyuinfo = document.getElementById("meiyuinfo");
+
+        nowItem = meiyu[Math.floor(Math.random() * meiyu.length)];
+        meiyuinfo.innerText = nowItem["question"];
+        const options = $(".option");
+        options[0].innerText = nowItem["options"][0].toString();
+        options[1].innerText = nowItem["options"][1].toString();
+        options[2].innerText = nowItem["options"][2].toString();
+        options[3].innerText = nowItem["options"][3].toString();
+    }
+
+    window.onload = init;
+</script>
+
+<div id="meiyucon">
+    <div id="meiyuinfo"></div>
+    <a class="btn waves-effect waves-light green option" onclick="next('A')">A</a>
+    <a class="btn waves-effect waves-light brown option" onclick="next('B')">B</a>
+    <a class="btn waves-effect waves-light pink option" onclick="next('C')">C</a>
+    <a class="btn waves-effect waves-light grey option" onclick="next('D')">D</a>
+    <br><br>
+    <a class="btn waves-effect waves-light hide" onclick="next()">Next</a>
+</div>

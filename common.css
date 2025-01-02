@@ -3,14 +3,23 @@
     justify-content: center;
     align-items: center;
     height: 100vh;
-    font-size: x-large;
     flex-direction: column;
     background-color: #03A9F4;
+}
+
+#meiyuinfo {
+    margin-bottom: 3vh;
+}
+
+#btn-box {
+    background-color: #00000005;
+    padding: 10px;
+    border-radius: 10px;
 }
 
 #con {
     background: #E1F5FE;
     padding: 20px;
     border-radius: 10px;
-    width: 40vw;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
 }

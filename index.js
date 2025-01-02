@@ -1,18 +1,4 @@
-let xhr = new XMLHttpRequest();
-xhr.open("GET", "./meiyu.json");
-xhr.send();
-
-let meiyu;
-xhr.onload = function () {
-    meiyu = JSON.parse(xhr.responseText);
-}
-
-const states = {
-    "NEW": 0,
-    "REVEALED": 1,
-}
-
-let state, meiyuinfo, nowItem;
+let meiyuinfo, nowItem, meiyu, options;
 
 function next (ua) {
     if (["A", "B", "C", "D"].includes(ua)) {
@@ -35,24 +21,29 @@ function next (ua) {
 }
 
 function renewItem () {
-    nowItem = meiyu[Math.floor(Math.random() * meiyu.length)];
-    meiyuinfo.innerText = nowItem["question"];
-    options[0].innerText = nowItem["options"][0].toString();
-    options[1].innerText = nowItem["options"][1].toString();
-    options[2].innerText = nowItem["options"][2].toString();
-    options[3].innerText = nowItem["options"][3].toString();
+    const i = Math.floor(Math.random() * meiyu.length);
+    nowItem = meiyu[i];
+    meiyuinfo.innerText = `${i+1}. `+nowItem["question"];
+    options[0].innerText = "A." + nowItem["options"][0].toString();
+    options[1].innerText = "B." + nowItem["options"][1].toString();
+    options[2].innerText = "C." + nowItem["options"][2].toString();
+    options[3].innerText = "D." + nowItem["options"][3].toString();
 }
 
-let options;
-function init () {
-    state = states.NEW;
+window.onload = function () {
     meiyuinfo = document.getElementById("meiyuinfo");
     options = $(".option");
 
-    renewItem();
-}
+    let xhr = new XMLHttpRequest();
+    xhr.onload = function () {
+        meiyu = JSON.parse(xhr.responseText);
+        renewItem();
+    }
+    xhr.open("GET", "./meiyu.json");
+    xhr.send();
 
-window.onload = init;
+    M.toast({html: "（可以用数字键盘作答）"});
+};
 
 addEventListener("keypress", function (event) {
     switch (event.key) {

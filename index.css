@@ -1,0 +1,16 @@
+#meiyucon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    font-size: x-large;
+    flex-direction: column;
+    padding: 25vh;
+    background-color: #03A9F4;
+}
+
+#con {
+    background: #E1F5FE;
+    padding: 20px;
+    border-radius: 10px;
+}

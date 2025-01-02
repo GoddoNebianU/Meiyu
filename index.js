@@ -1,55 +1,79 @@
-let meiyuinfo, nowItem, meiyu, options;
-
-function next (ua) {
-    if (["A", "B", "C", "D"].includes(ua)) {
-        if (ua === nowItem["answer"]) {
-            M.toast({html: "Correct!"});
-            next();
-        } else {
-            M.toast({
-                html: "Incorrect! Answer: " + nowItem["options"][{
-                    "A": 0,
-                    "B": 1,
-                    "C": 2,
-                    "D": 3
-                }[nowItem['answer']]]
-            });
-        }
-    } else {
-        renewItem();
-    }
-}
-
-function renewItem () {
-    const i = Math.floor(Math.random() * meiyu.length);
-    nowItem = meiyu[i];
-    meiyuinfo.innerText = `${i+1}. `+nowItem["question"];
-    options[0].innerText = "A." + nowItem["options"][0].toString();
-    options[1].innerText = "B." + nowItem["options"][1].toString();
-    options[2].innerText = "C." + nowItem["options"][2].toString();
-    options[3].innerText = "D." + nowItem["options"][3].toString();
-}
-
-window.onload = function () {
-    meiyuinfo = document.getElementById("meiyuinfo");
-    options = $(".option");
-
-    let xhr = new XMLHttpRequest();
-    xhr.onload = function () {
-        meiyu = JSON.parse(xhr.responseText);
-        renewItem();
-    }
-    xhr.open("GET", "./meiyu.json");
-    xhr.send();
-
-    M.toast({html: "（可以用数字键盘作答）"});
+const ANSWER_MAP = {
+    "A": 0,
+    "B": 1,
+    "C": 2,
+    "D": 3
 };
 
-addEventListener("keypress", function (event) {
-    switch (event.key) {
-        case "1": options[0].click(); break;
-        case "2": options[1].click(); break;
-        case "3": options[2].click(); break;
-        case "4": options[3].click(); break;
+const KEY_MAP = {
+    "1": 0,
+    "2": 1,
+    "3": 2,
+    "4": 3
+};
+
+class MeiYu {
+    constructor () {
+        this.meiyuinfo = null;
+        this.options = null;
+        this.meiyu = [];
+        this.currentItem = null;
     }
+
+    async init (){
+        this.meiyuinfo = document.getElementById("meiyuinfo");
+        this.meiyuinfo = document.getElementById("meiyuinfo");
+        this.options = Array.from(document.getElementsByClassName("option"));
+
+        const response = await fetch("./meiyu.json");
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        this.meiyu = await response.json();
+
+        this.bindEvents();
+        this.renewItem();
+        this.showWelcomeAnswer();
+    }
+
+    showWelcomeAnswer () {
+        M.toast({html: "（可以用数字键盘作答）"})
+    }
+
+    bindEvents () {
+        document.addEventListener("keypress", (event) => {
+            const optionIndex = KEY_MAP[event.key];
+            if (optionIndex !== undefined) {
+                this.options[optionIndex].click();
+            }
+        })
+        this.options.forEach((option, index) => {
+            option.addEventListener("click", () => {
+                this.handleAnswer("ABCD"[index])
+            });
+        });
+    }
+
+    handleAnswer (answer) {
+        if (this.currentItem.answer === answer) {
+            M.toast({html: "Correct!"});
+            this.renewItem();
+        } else {
+            M.toast({
+                html: "Incorrect! Answer: " + this.currentItem["options"][ANSWER_MAP[this.currentItem['answer']]]
+            });
+        }
+    }
+
+    renewItem () {
+        const i = Math.floor(Math.random() * this.meiyu.length);
+        this.currentItem = this.meiyu[i];
+        this.meiyuinfo.innerText = `${i+1}. ` + this.currentItem["question"];
+        this.options.forEach((option, index) => {
+            option.innerText = "ABCD"[index] + ". " + this.currentItem.options[index];
+        });
+    }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    const meiYu = new MeiYu();
+    meiYu.init().catch(console.error);
 })

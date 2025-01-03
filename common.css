@@ -13,10 +13,10 @@ body {
 
 #meiyuinfo {
     margin-bottom: 3vh;
+    background-color: #00000005;
 }
 
 #btn-box {
-    background-color: #00000005;
     padding: 10px;
     border-radius: 10px;
 }

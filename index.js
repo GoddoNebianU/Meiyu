@@ -40,7 +40,7 @@ class MeiYu {
 
     record(rcd) {
         this.history.push(rcd);
-        if (this.history.length > 40) {
+        if (this.history.length > 80) {
             this.history.shift();
         }
         this.correctRate.innerText = `（正确率：${

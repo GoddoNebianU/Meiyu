@@ -29,7 +29,7 @@ class MeiYu {
         this.options = Array.from(document.getElementsByClassName("option"));
         this.correctRate = document.getElementById("correctRate");
 
-        const response = await fetch("./meiyu.json");
+        const response = await fetch("./meiyu200+.json");
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         this.meiyu = await response.json();
 

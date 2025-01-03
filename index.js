@@ -21,6 +21,7 @@ class MeiYu {
         this.history = [];
         this.pause = false;
         this.correctRate = null;
+        this.skip = null;
     }
 
     async init() {
@@ -28,6 +29,7 @@ class MeiYu {
         this.meiyuinfo = document.getElementById("meiyuinfo");
         this.options = Array.from(document.getElementsByClassName("option"));
         this.correctRate = document.getElementById("correctRate");
+        this.skip = document.getElementById("skip");
 
         const response = await fetch("./meiyu200+.json");
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
@@ -71,6 +73,9 @@ class MeiYu {
                 this.handleAnswer("ABCD"[index])
             });
         });
+        this.skip.addEventListener("click", () => {
+            this.handleAnswer("skip");
+        });
     }
 
     handleAnswer(answer) {
@@ -80,6 +85,17 @@ class MeiYu {
             M.toast({html: "Correct!"});
             this.record([this.currentItem.index, true]);
             this.renewItem();
+        } else if (answer==="skip") {
+            this.pause = true;
+            M.toast({
+                html: "Answer: " + this.currentItem["options"][ANSWER_MAP[this.currentItem['answer']]],
+                classes: "red"
+            });
+            this.record([this.currentItem.index, false]);
+            setTimeout(() => {
+                this.renewItem();
+                this.pause = false;
+            }, 5000);
         } else {
             this.pause = true;
             M.toast({

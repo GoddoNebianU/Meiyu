@@ -7,6 +7,10 @@
     background-color: #757575;
 }
 
+body {
+    margin: 0;
+}
+
 #meiyuinfo {
     margin-bottom: 3vh;
 }
